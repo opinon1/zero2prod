@@ -1,0 +1,9 @@
+actix-web
+serde
+sqlx
+
+!TODO
+axum
+leptos
+tokio (native)
+deisel
