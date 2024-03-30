@@ -33,8 +33,7 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
     let settings = config::Config::builder()
         .add_source(config::File::from(configuration_directory.join("base")).required(true))
         .add_source(
-            config::File::from(configuration_directory.join(environment.as_str()))
-                .required(true)?,
+            config::File::from(configuration_directory.join(environment.as_str())).required(true),
         )
         .build()?;
 
