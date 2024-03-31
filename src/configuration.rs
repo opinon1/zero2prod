@@ -1,3 +1,4 @@
+use config::Source;
 use secrecy::{ExposeSecret, Secret};
 use serde_aux::field_attributes::deserialize_number_from_string;
 use sqlx::postgres::PgConnectOptions;
@@ -45,9 +46,10 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
         .add_source(
             config::File::from(configuration_directory.join(environment.as_str())).required(true),
         )
-        .add_source(config::Environment::with_prefix("app").separator("__"))
+        .add_source(config::Environment::with_prefix("app"))
         .build()?
         .try_deserialize()?;
+
     println!("{:?}", &settings);
 
     Ok(settings)
