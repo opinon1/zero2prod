@@ -46,7 +46,7 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
         .add_source(
             config::File::from(configuration_directory.join(environment.as_str())).required(true),
         )
-        .add_source(config::Environment::with_prefix("app"))
+        .add_source(config::Environment::with_prefix("appdatabase").separator("_"))
         .build()?
         .try_deserialize()?;
 
