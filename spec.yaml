@@ -30,7 +30,6 @@ services:
       # It turned out to be useful in the end!
       http_path: /health_check
     # The port the application will be listening on for incoming requests
-    # It should match what we specified in our configuration/production.yaml file!
     http_port: 3000
     # For production workloads we'd go for at least two!
     # But let's try to keep the bill under control for now...
