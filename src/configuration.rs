@@ -40,16 +40,17 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
     for (key, value) in std::env::vars() {
         println!("{}: {}", key, value);
     }
-    let app_configs = config::Environment::with_prefix("app").separator("__");
-
-    println!("{:?}", &app_configs.collect());
 
     let settings = config::Config::builder()
         .add_source(config::File::from(configuration_directory.join("base")).required(true))
         .add_source(
             config::File::from(configuration_directory.join(environment.as_str())).required(true),
         )
-        .add_source(app_configs)
+        .add_source(
+            config::Environment::with_prefix("app")
+                .prefix_separator("_")
+                .separator("__"),
+        )
         .build()?
         .try_deserialize()?;
 
