@@ -8,7 +8,7 @@ name: zero2prod
 # https://www.digitalocean.com/docs/platform/availability-matrix/
 # They must specified lowercased.
 # `fra` stands for Frankfurt (Germany - EU)
-region: sfo2
+region: sfo
 services:
   - name: zero2prod
     # Relative to the repository root
@@ -39,6 +39,23 @@ services:
     # All incoming requests should be routed to our app
     routes:
       - path: /
+
+    envs:
+      - key: APP_DATABASE__USERNAME
+        scope: RUN_TIME
+        value: ${newsletter.USERNAME}
+      - key: APP_DATABASE__PASSWORD
+        scope: RUN_TIME
+        value: ${newsletter.PASSWORD}
+      - key: APP_DATABASE__HOST
+        scope: RUN_TIME
+        value: ${newsletter.HOSTNAME}
+      - key: APP_DATABASE__PORT
+        scope: RUN_TIME
+        value: ${newsletter.PORT}
+      - key: APP_DATABASE__DATABASE_NAME
+        scope: RUN_TIME
+        value: ${newsletter.DATABASE}
 
 databases:
   # PG = Postgres
