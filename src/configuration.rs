@@ -3,20 +3,20 @@ use serde_aux::field_attributes::deserialize_number_from_string;
 use sqlx::postgres::PgConnectOptions;
 use sqlx::postgres::PgSslMode;
 
-#[derive(serde::Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 pub struct ApplicationSettings {
     #[serde(deserialize_with = "deserialize_number_from_string")]
     pub port: u16,
     pub host: String,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 pub struct Settings {
     pub database: DatabaseSettings,
     pub application: ApplicationSettings,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 pub struct DatabaseSettings {
     pub username: String,
     pub password: Secret<String>,
@@ -42,9 +42,11 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
             config::File::from(configuration_directory.join(environment.as_str())).required(true),
         )
         .add_source(config::Environment::with_prefix("APP").separator("__"))
-        .build()?;
+        .build()?
+        .try_deserialize()?;
+    println!("{:?}", &settings);
 
-    Ok(settings.try_deserialize()?)
+    Ok(settings)
 }
 impl DatabaseSettings {
     pub fn without_db(&self) -> PgConnectOptions {
