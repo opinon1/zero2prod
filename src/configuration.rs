@@ -36,6 +36,10 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
         .try_into()
         .expect("Failed to parse APP_ENVIRONMENT.");
 
+    for (key, value) in std::env::vars() {
+        println!("{}: {}", key, value);
+    }
+
     let settings = config::Config::builder()
         .add_source(config::File::from(configuration_directory.join("base")).required(true))
         .add_source(
@@ -45,10 +49,7 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
         .build()?
         .try_deserialize()?;
     println!("{:?}", &settings);
-    println!(
-        "{:?}",
-        config::Environment::with_prefix("app").separator("__")
-    );
+
     Ok(settings)
 }
 impl DatabaseSettings {
