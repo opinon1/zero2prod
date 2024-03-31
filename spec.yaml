@@ -40,19 +40,19 @@ services:
       - path: /
 
     envs:
-      - key: APPDATABASE_USERNAME
+      - key: APP_DATABASE__USERNAME
         scope: RUN_TIME
         value: ${newsletter.USERNAME}
-      - key: APPDATABASE_PASSWORD
+      - key: APP_DATABASE__PASSWORD
         scope: RUN_TIME
         value: ${newsletter.PASSWORD}
-      - key: APPDATABASE_HOST
+      - key: APP_DATABASE__HOST
         scope: RUN_TIME
         value: ${newsletter.HOSTNAME}
-      - key: APPDATABASE_PORT
+      - key: APP_DATABASE__PORT
         scope: RUN_TIME
         value: ${newsletter.PORT}
-      - key: APPDATABASE_DATABASE_NAME
+      - key: APP_DATABASE__DATABASE_NAME
         scope: RUN_TIME
         value: ${newsletter.DATABASE}
 
