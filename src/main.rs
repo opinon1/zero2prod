@@ -4,7 +4,6 @@ use std::net::TcpListener;
 use zero2prod::configuration::get_configuration;
 use zero2prod::startup::run;
 use zero2prod::telemetry::{get_subscriber, init_subscriber};
-
 /// Compose multiple layers into a `tracing`'s subscriber.
 ///
 /// # Implementation Notes
