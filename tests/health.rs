@@ -34,8 +34,10 @@ async fn spawn_app() -> TestApp {
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);
     let mut configuration = get_configuration().expect("Failed to read configuration.");
+
     configuration.database.database_name =
         "test-".to_string() + Uuid::new_v4().to_string().as_str();
+
     let connection_pool = configure_database(&configuration.database).await;
     let server = run(listener, connection_pool.clone()).expect("Failed to bind address");
     let _ = tokio::spawn(server);
@@ -58,7 +60,7 @@ async fn configure_database(config: &DatabaseSettings) -> PgPool {
         .expect("Failed to create database.");
     // Migrate database
 
-    let connection_pool = PgPool::connect_with(config.without_db())
+    let connection_pool = PgPool::connect_with(config.with_db())
         .await
         .expect("Failed to connect to Postgres.");
 
@@ -68,23 +70,6 @@ async fn configure_database(config: &DatabaseSettings) -> PgPool {
         .expect("Failed to migrate the database");
 
     connection_pool
-}
-
-async fn drop_db(db_name: String) {
-    let config = get_configuration()
-        .expect("Failed to read configuration.")
-        .database;
-    let mut connection = PgConnection::connect_with(&config.with_db())
-        .await
-        .expect("Failed to connect to Postgres");
-    connection
-        .execute(
-            format!(r#"DROP DATABASE "{}";"#, db_name)
-                .to_string()
-                .as_str(),
-        )
-        .await
-        .expect("Failed to drop database.");
 }
 
 #[tokio::test]
@@ -104,9 +89,6 @@ async fn health_check_works() {
     // Assert
     assert!(response.status().is_success());
     assert_eq!(Some(0), response.content_length());
-
-    app.db_pool.close().await;
-    drop_db(app.db_name).await;
 }
 
 #[tokio::test]
@@ -134,9 +116,6 @@ async fn subscribe_returns_a_200_for_valid_form_data() {
         .expect("Failed to fetch saved subscription.");
     assert_eq!(saved.email, "ursula_le_guin@gmail.com");
     assert_eq!(saved.name, "le guin");
-
-    app.db_pool.close().await;
-    drop_db(app.db_name).await;
 }
 
 #[tokio::test]
@@ -167,7 +146,33 @@ async fn subscribe_returns_a_400_when_data_is_missing() {
             error_message
         );
     }
+}
 
-    app.db_pool.close().await;
-    drop_db(app.db_name).await;
+#[tokio::test]
+async fn subscribe_returns_a_400_when_fields_are_present_but_empty() {
+    // Arrange
+    let app = spawn_app().await;
+    let client = reqwest::Client::new();
+    let test_cases = vec![
+        ("name=&email=ursula_le_guin%40gmail.com", "empty name"),
+        ("name=Ursula&email=", "empty email"),
+        ("name=Ursula&email=definitely-not-an-email", "invalid email"),
+    ];
+    for (body, description) in test_cases {
+        // Act
+        let response = client
+            .post(&format!("{}/subscriptions", &app.address))
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .body(body)
+            .send()
+            .await
+            .expect("Failed to execute request.");
+        // Assert
+        assert_eq!(
+            400,
+            response.status().as_u16(),
+            "The API did not return a 400 OK when the payload was {}.",
+            description
+        );
+    }
 }
