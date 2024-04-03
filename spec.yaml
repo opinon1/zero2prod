@@ -56,6 +56,7 @@ services:
         scope: RUN_TIME
         value: ${newsletter.DATABASE}
 
+# run: DATABASE_URL=YOUR-DIGITAL-OCEAN-DB-CONNECTION-STRING sqlx migrate run
 databases:
   # PG = Postgres
   - engine: PG

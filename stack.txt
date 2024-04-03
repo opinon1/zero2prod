@@ -7,3 +7,4 @@ axum
 leptos
 tokio (native)
 deisel
+quickcheck
