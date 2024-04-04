@@ -11,7 +11,6 @@ path = "src/lib.rs"
 path = "src/main.rs"
 name = "zero2prod"
 
-[dev-dependencies]
 
 [dependencies]
 reqwest = {version = "0.12.2", features = ["json", "rustls-tls"]}
