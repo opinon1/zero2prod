@@ -11,7 +11,6 @@ path = "src/lib.rs"
 path = "src/main.rs"
 name = "zero2prod"
 
-
 [dependencies]
 reqwest = {version = "0.12.2", features = ["json", "rustls-tls"]}
 actix-web = "4.5.1"
@@ -41,5 +40,9 @@ unicode-segmentation = "1.11.0"
 claim = "0.5.0"
 validator = "0.17.0"
 fake = "2.9.2"
+serde_json = "1.0.115"
+
+[dev-dependencies]
+wiremock = "0.6.0"
 
 
