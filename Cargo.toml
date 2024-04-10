@@ -41,6 +41,7 @@ claim = "0.5.0"
 validator = "0.17.0"
 fake = "2.9.2"
 serde_json = "1.0.115"
+linkify = "0.10.0"
 
 [dev-dependencies]
 wiremock = "0.6.0"
